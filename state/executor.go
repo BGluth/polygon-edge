@@ -303,7 +303,7 @@ func (t *Transition) Write(txn *types.Transaction) error {
 func (t *Transition) Commit() (Snapshot, *types.Trace, types.Hash) {
 	// pre-commit op
 	targetAddr := types.Address{}
-	targetAddr[t.ctx.Number/20] = 1
+	targetAddr[t.ctx.Number%20] = 1
 
 	t.state.AddBalance(targetAddr, big.NewInt(10))
 
