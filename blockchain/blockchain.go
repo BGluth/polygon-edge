@@ -860,11 +860,13 @@ func (b *Blockchain) WriteFullBlock(fblock *types.FullBlock, source string) erro
 
 		ar.Reset()
 		if err := fblock.Receipts[i].MarshalRLPWith(ar).GetHash(tt.ReceiptNodeHash[:]); err != nil {
+			println("RECEIPT ERR: {}", err)
 			return err
 		}
 
 		ar.Reset()
 		if err := fblock.Block.Transactions[i].MarshalRLPWith(ar).GetHash(tt.TxnNodeHash[:]); err != nil {
+			println("TXN ERR: {}", err)
 			return err
 		}
 

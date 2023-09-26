@@ -172,16 +172,16 @@ func (t *Txn) lookup(node Node, key []byte) (Node, []byte) {
 		t.tracer.Trace(node)
 	}
 
-	fmt.Println("-- LOOKUP NODE KEY --", key)
+	// fmt.Println("-- LOOKUP NODE KEY --", key)
 
 	switch n := node.(type) {
 	case nil:
-		fmt.Println("nil node")
+		// fmt.Println("nil node")
 		return nil, nil
 
 	case *ValueNode:
 		if n.hash {
-			fmt.Println("hash node")
+			// fmt.Println("hash node")
 			nc, ok, err := GetNode(n.buf, t.storage)
 			if err != nil {
 				panic(err) //nolint:gocritic
@@ -203,11 +203,11 @@ func (t *Txn) lookup(node Node, key []byte) (Node, []byte) {
 		}
 
 	case *ShortNode:
-		fmt.Println("short node")
+		// fmt.Println("short node")
 
 		plen := len(n.key)
 		if plen > len(key) || !bytes.Equal(key[:plen], n.key) {
-			fmt.Println("-- NKEY KEY --", n.key, key)
+			// fmt.Println("-- NKEY KEY --", n.key, key)
 			return nil, nil
 		}
 
@@ -225,7 +225,7 @@ func (t *Txn) lookup(node Node, key []byte) (Node, []byte) {
 			return t.lookup(n.value, key)
 		}
 
-		fmt.Println("full node")
+		// fmt.Println("full node")
 
 		child, res := t.lookup(n.getEdge(key[0]), key[1:])
 
@@ -263,7 +263,7 @@ func (t *Txn) Insert(key, value []byte) {
 
 func (t *Txn) insert(node Node, search, value []byte) Node {
 	if t.tracer != nil {
-		fmt.Println("-- INSERT TRACE NODE --", types.BytesToHash(search))
+		// fmt.Println("-- INSERT TRACE NODE --", types.BytesToHash(search))
 		t.tracer.Trace(node)
 	}
 
