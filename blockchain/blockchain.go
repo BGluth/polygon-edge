@@ -16,6 +16,7 @@ import (
 	"github.com/0xPolygon/polygon-edge/state"
 	"github.com/0xPolygon/polygon-edge/types"
 	"github.com/0xPolygon/polygon-edge/types/buildroot"
+	"github.com/umbracle/fastrlp"
 
 	"github.com/hashicorp/go-hclog"
 	lru "github.com/hashicorp/golang-lru"
@@ -847,15 +848,30 @@ func (b *Blockchain) WriteFullBlock(fblock *types.FullBlock, source string) erro
 	// At this point we can loop through the traces and receipts, and generate intermediate tries
 	var rs types.Receipts
 
-	for _, tt := range fblock.Trace.TxnTraces {
+	var arenaPool fastrlp.ArenaPool
+	ar := arenaPool.Get()
+
+	for i, tt := range fblock.Trace.TxnTraces {
 		for _, r := range fblock.Receipts {
 			if r.TxHash == tt.Hash {
 				rs = append(rs, r)
 			}
 		}
 
+		ar.Reset()
+		if err := fblock.Receipts[i].MarshalRLPWith(ar).GetHash(tt.ReceiptNodeHash[:]); err != nil {
+			return err
+		}
+
+		ar.Reset()
+		if err := fblock.Block.Transactions[i].MarshalRLPWith(ar).GetHash(tt.TxnNodeHash[:]); err != nil {
+			return err
+		}
+
 		tt.ReceiptRoot = buildroot.CalculateReceiptsRoot(rs)
 	}
+
+	arenaPool.Put(ar)
 
 	if err := b.writeTrace(fblock.Trace, header.Number); err != nil {
 		return err

@@ -261,8 +261,14 @@ type TxnTrace struct {
 	// ReceiptRoot is the root of the trie of receipts for this transaction
 	ReceiptRoot Hash `json:"receiptRoot"`
 
+	// ReceiptNodeHash is the hash of the new receipt node added by the txn.
+	ReceiptNodeHash Hash `json:"ReceiptNodeHash"`
+
 	// TxnRoot is the root of the trie of transactions for this block
 	TxnRoot Hash `json:"txnRoot,omitempty"`
+
+	// ReceiptNodeHash is the hash of the new txn node added by the txn.
+	TxnNodeHash Hash `json:"TxnNodeHash"`
 
 	// Hash is the hash of the transaction
 	Hash Hash `json:"hash"`
