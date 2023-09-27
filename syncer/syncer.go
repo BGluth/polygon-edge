@@ -243,7 +243,7 @@ func (s *syncer) bulkSyncWithPeer(peerID peer.ID, newBlockCallback func(*types.F
 			if err != nil {
 				metrics.IncrCounter([]string{syncerMetrics, "bad_block"}, 1)
 
-				return lastReceivedNumber, false, fmt.Errorf("unable to verify block, %w", err)
+				return lastReceivedNumber, false, fmt.Errorf("%w", err)
 			}
 
 			if err := s.blockchain.WriteFullBlock(fullBlock, syncerName); err != nil {

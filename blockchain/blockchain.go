@@ -859,16 +859,18 @@ func (b *Blockchain) WriteFullBlock(fblock *types.FullBlock, source string) erro
 		}
 
 		ar.Reset()
-		if err := fblock.Receipts[i].MarshalRLPWith(ar).GetHash(tt.ReceiptNodeHash[:]); err != nil {
-			println("RECEIPT ERR: {}", err)
-			return err
-		}
+		var rec_marshaled = fblock.Receipts[i].MarshalRLPWith(ar)
+		rec_marshaled.MarshalTo(tt.ReceiptNodeBytes)
+		println("RECEIPT: ", fblock.Receipts[i])
+		println("RECEIPT MARSHALED: ", rec_marshaled)
+		println("RECEIPT NODE BYTES ", tt.ReceiptNodeBytes)
 
 		ar.Reset()
-		if err := fblock.Block.Transactions[i].MarshalRLPWith(ar).GetHash(tt.TxnNodeHash[:]); err != nil {
-			println("TXN ERR: {}", err)
-			return err
-		}
+		var txn_marshaled = fblock.Block.Transactions[i].MarshalRLPWith(ar)
+		txn_marshaled.MarshalTo(tt.TxnNodeBytes)
+		println("TXN: ", fblock.Block.Transactions[i])
+		println("TXN MARSHALED: ", txn_marshaled)
+		println("TXN NODE BYTES ", tt.TxnNodeBytes)
 
 		tt.ReceiptRoot = buildroot.CalculateReceiptsRoot(rs)
 	}
